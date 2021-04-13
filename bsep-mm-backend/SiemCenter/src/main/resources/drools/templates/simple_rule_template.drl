@@ -1,0 +1,30 @@
+package rules;
+
+import bsep.sc.SiemCenter.model.Log;
+import bsep.sc.SiemCenter.model.Alarm;
+import java.util.Date;
+import java.util.List
+import java.util.ArrayList;
+
+global bsep.sc.SiemCenter.service.AlarmService alarmService
+global bsep.sc.SiemCenter.repository.AlarmRepository alarmRepository
+
+rule "Test simple rule"
+    no-loop true
+    enabled true
+    timer(cron:0/5 * * * * ?)
+    when
+        $log: Log($src: machineIp)
+    then
+        alarmService.add(new Alarm(
+                "alarm name",
+                "alarm description",
+                "alarmType",
+                $log.getMachineIp(),
+                $log.getMachineOS(),
+                $log.getMachineName(),
+                $log.getAgentInfo(),
+                new Date(),
+                new ArrayList<>()
+        ));
+end
